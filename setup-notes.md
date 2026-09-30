@@ -26,7 +26,7 @@ wifi-sniffer/
 ├── home-assistant/
 │   ├── configuration.yaml        # includes all files below
 │   ├── automations.yaml          # 7 automations (incl. unknown device + loiter)
-│   ├── binary_sensors.yaml       # "Someone Home" template sensor
+│   ├── template.yaml             # "Someone Home" template binary sensor
 │   ├── input_boolean.yaml        # Security Armed, Quiet Mode
 │   ├── input_text.yaml           # Known WiFi MACs / Fingerprints
 │   ├── mqtt.yaml                 # WiFi probe + distinct device counters
@@ -61,7 +61,8 @@ docker compose up -d
    already).
 2. Restart HA (Settings > System > Restart).
 3. Add the **MQTT** integration: Settings > Devices & Services > Add
-   Integration > MQTT > broker `localhost:1883`, no auth.
+   Integration > MQTT > broker `mosquitto` (the Docker service name - NOT
+   localhost), port `1883`, no auth.
 4. Add the **ESPHome** integration (after Step 3 flashes the device).
 5. Set your timezone/location: Settings > System > General.
 

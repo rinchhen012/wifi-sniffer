@@ -1,3 +1,4 @@
-- name: Known WiFi MACs / Fingerprints
-  id: known_wifi_macs
+known_wifi_macs:
+  name: Known WiFi MACs / Fingerprints
   icon: mdi:devices
+  max: 255

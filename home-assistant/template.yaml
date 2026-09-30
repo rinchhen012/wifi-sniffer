@@ -1,0 +1,5 @@
+- binary_sensor:
+    - name: "Someone Home"
+      unique_id: someone_home
+      device_class: occupancy
+      state: "{{ states.person | map(attribute='state') | select('eq', 'home') | list | count > 0 }}"

@@ -8,12 +8,17 @@
   alias: "Arrival Notification"
   mode: single
   trigger:
-    - platform: state
-      entity_id: person.*
-      to: home
+    - platform: event
+      event_type: state_changed
   condition:
     - condition: and
       conditions:
+        - condition: template
+          value_template: >-
+            {{ trigger.event.data.entity_id.startswith('person.')
+               and trigger.event.data.old_state is not none
+               and trigger.event.data.new_state.state == 'home'
+               and trigger.event.data.old_state.state != 'home' }}
         - condition: state
           entity_id: input_boolean.quiet_mode
           state: "off"
@@ -23,18 +28,23 @@
     - service: notify.everyone
       data:
         title: "Welcome home"
-        message: "{{ trigger.to_state.attributes.friendly_name }} arrived home."
+        message: "{{ trigger.event.data.new_state.attributes.friendly_name }} arrived home."
 
 - id: departure_notification
   alias: "Departure Notification"
   mode: single
   trigger:
-    - platform: state
-      entity_id: person.*
-      to: not_home
+    - platform: event
+      event_type: state_changed
   condition:
     - condition: and
       conditions:
+        - condition: template
+          value_template: >-
+            {{ trigger.event.data.entity_id.startswith('person.')
+               and trigger.event.data.old_state is not none
+               and trigger.event.data.new_state.state != 'home'
+               and trigger.event.data.old_state.state == 'home' }}
         - condition: state
           entity_id: input_boolean.quiet_mode
           state: "off"
@@ -44,7 +54,7 @@
     - service: notify.everyone
       data:
         title: "Goodbye"
-        message: "{{ trigger.to_state.attributes.friendly_name }} left home."
+        message: "{{ trigger.event.data.new_state.attributes.friendly_name }} left home."
 
 - id: arm_security
   alias: "Arm Security When Empty"
