@@ -1,0 +1,18 @@
+sensor:
+  - name: "WiFi Probe Devices"
+    unique_id: wifi_probe_devices
+    state_topic: "presence/wifi_probes"
+    value_template: "{{ value_json.devices | length }}"
+    unit_of_measurement: "devices"
+    icon: mdi:wifi-marker
+    json_attributes_topic: "presence/wifi_probes"
+    json_attributes_template: "{{ {'devices': value_json.devices} | tojson }}"
+
+  - name: "WiFi Distinct Devices"
+    unique_id: wifi_distinct_devices
+    state_topic: "presence/wifi_devices"
+    value_template: "{{ value_json.devices | length }}"
+    unit_of_measurement: "devices"
+    icon: mdi:account-multiple
+    json_attributes_topic: "presence/wifi_devices"
+    json_attributes_template: "{{ {'devices': value_json.devices} | tojson }}"

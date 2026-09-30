@@ -1,0 +1,5 @@
+- name: everyone
+  platform: group
+  services:
+    - service: mobile_app_your_iphone
+    - service: mobile_app_your_android

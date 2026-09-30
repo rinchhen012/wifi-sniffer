@@ -1,0 +1,9 @@
+# Home Assistant configuration
+# Set your location/timezone via Settings > System > General (UI writes here).
+
+automation: !include automations.yaml
+binary_sensor: !include binary_sensors.yaml
+input_boolean: !include input_boolean.yaml
+input_text: !include input_text.yaml
+mqtt: !include mqtt.yaml
+notify: !include notify.yaml

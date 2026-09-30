@@ -1,0 +1,160 @@
+# Presence & security automations
+# Notify targets: notify.everyone is defined in notify.yaml - update the
+# service names there to your actual mobile_app_* services.
+# The "Known WiFi MACs / Fingerprints" helper accepts comma-separated MACs
+# and/or 8-hex-digit fingerprint IDs (from the WiFi Distinct Devices sensor).
+
+- id: arrival_notification
+  alias: "Arrival Notification"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: person.*
+      to: home
+  condition:
+    - condition: and
+      conditions:
+        - condition: state
+          entity_id: input_boolean.quiet_mode
+          state: "off"
+        - condition: template
+          value_template: "{{ now().hour >= 7 or now().hour < 23 }}"
+  action:
+    - service: notify.everyone
+      data:
+        title: "Welcome home"
+        message: "{{ trigger.to_state.attributes.friendly_name }} arrived home."
+
+- id: departure_notification
+  alias: "Departure Notification"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: person.*
+      to: not_home
+  condition:
+    - condition: and
+      conditions:
+        - condition: state
+          entity_id: input_boolean.quiet_mode
+          state: "off"
+        - condition: template
+          value_template: "{{ now().hour >= 7 or now().hour < 23 }}"
+  action:
+    - service: notify.everyone
+      data:
+        title: "Goodbye"
+        message: "{{ trigger.to_state.attributes.friendly_name }} left home."
+
+- id: arm_security
+  alias: "Arm Security When Empty"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.someone_home
+      to: "off"
+      for: "00:05:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.someone_home
+      state: "off"
+    - condition: state
+      entity_id: input_boolean.security_armed
+      state: "off"
+  action:
+    - service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.security_armed
+    - service: notify.everyone
+      data:
+        title: "Security armed"
+        message: "House is empty. Motion and unknown-device alerts enabled."
+
+- id: disarm_security
+  alias: "Disarm Security On Arrival"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.someone_home
+      to: "on"
+  action:
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.security_armed
+    - service: notify.everyone
+      data:
+        title: "Security disarmed"
+        message: "Someone is home - welcome back!"
+
+- id: motion_alert
+  alias: "Security - Motion While Armed"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.pir_motion
+      to: "on"
+  condition:
+    - condition: state
+      entity_id: input_boolean.security_armed
+      state: "on"
+    - condition: template
+      value_template: >-
+        {{ this.attributes.last_triggered is none or
+           (now() - this.attributes.last_triggered).total_seconds() > 600 }}
+  action:
+    - service: notify.everyone
+      data:
+        title: "ALERT"
+        message: "Motion detected while the house was empty!"
+
+- id: unknown_wifi_alert
+  alias: "Security - Unknown WiFi Device"
+  mode: single
+  trigger:
+    - platform: mqtt
+      topic: "presence/wifi_new"
+  condition:
+    - condition: template
+      value_template: >-
+        {% set known = (states('input_text.known_wifi_macs') | default('', true)).split(',') | map('trim') | list %}
+        {{ value_json.fingerprint not in known and value_json.mac not in known }}
+  action:
+    - service: notify.everyone
+      data:
+        title: "Unknown device nearby"
+        message: >-
+          {% set known = (states('input_text.known_wifi_macs') | default('', true)).split(',') | map('trim') | list %}
+          New device fingerprint {{ value_json.fingerprint }} (MAC {{ value_json.mac }}, RSSI {{ value_json.rssi }} dBm)
+          {% if value_json.fingerprint not in known and value_json.mac not in known %}is not on the known list.{% endif %}
+    - service: persistent_notification.create
+      data:
+        title: "Unknown WiFi device"
+        message: >-
+          New device fingerprint {{ value_json.fingerprint }} (MAC {{ value_json.mac }}, RSSI {{ value_json.rssi }} dBm)
+
+- id: loiter_alert
+  alias: "Security - Device Loitering"
+  mode: single
+  trigger:
+    - platform: mqtt
+      topic: "presence/wifi_loiter"
+  condition:
+    - condition: template
+      value_template: >-
+        {% set known = (states('input_text.known_wifi_macs') | default('', true)).split(',') | map('trim') | list %}
+        {{ value_json.fingerprint not in known and value_json.mac not in known }}
+  action:
+    - service: notify.everyone
+      data:
+        title: "Device loitering near home"
+        message: >-
+          {% set known = (states('input_text.known_wifi_macs') | default('', true)).split(',') | map('trim') | list %}
+          Device {{ value_json.fingerprint }} has been nearby {{ value_json.span }}s,
+          seen with {{ value_json.macs }} MAC addresses (sequence confirms same radio:
+          {{ value_json.seq_contiguous }}).
+    - service: persistent_notification.create
+      data:
+        title: "Device loitering near home"
+        message: >-
+          Device {{ value_json.fingerprint }} nearby {{ value_json.span }}s,
+          {{ value_json.macs }} MACs, same-radio confirmed: {{ value_json.seq_contiguous }}.

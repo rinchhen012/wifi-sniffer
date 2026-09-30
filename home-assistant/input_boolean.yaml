@@ -1,0 +1,7 @@
+- name: Security Armed
+  id: security_armed
+  icon: mdi:shield-lock
+
+- name: Quiet Mode
+  id: quiet_mode
+  icon: mdi:weather-night

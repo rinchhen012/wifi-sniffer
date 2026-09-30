@@ -1,0 +1,28 @@
+# ESPHome / Python
+.venv/
+esphome/.esphome/
+__pycache__/
+*.pyc
+
+# Secrets - copy esphome/secrets.example.yaml to secrets.yaml and fill in
+esphome/secrets.yaml
+
+# Mosquitto runtime data
+mosquitto/data/
+mosquitto/log/
+
+# Home Assistant runtime artifacts (created once HA runs)
+home-assistant/.storage/
+home-assistant/.cloud/
+home-assistant/deps/
+home-assistant/tts/
+home-assistant/*.log
+home-assistant/*.log.*
+home-assistant/home-assistant_v2.db*
+home-assistant/home-assistant.db*
+home-assistant/.HA_VERSION
+home-assistant/.uuid
+home-assistant/zigbee.db*
+
+# macOS
+.DS_Store

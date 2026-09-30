@@ -1,0 +1,7 @@
+- platform: template
+  sensors:
+    someone_home:
+      friendly_name: "Someone Home"
+      device_class: occupancy
+      value_template: >
+        {{ states.person | map(attribute='state') | select('eq', 'home') | list | count > 0 }}

@@ -1,0 +1,3 @@
+- name: Known WiFi MACs / Fingerprints
+  id: known_wifi_macs
+  icon: mdi:devices
