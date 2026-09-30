@@ -127,20 +127,20 @@
     - condition: template
       value_template: >-
         {% set known = (states('input_text.known_wifi_macs') | default('', true)).split(',') | map('trim') | list %}
-        {{ value_json.fingerprint not in known and value_json.mac not in known }}
+        {{ trigger.payload_json.fingerprint not in known and trigger.payload_json.mac not in known }}
   action:
     - service: notify.everyone
       data:
         title: "Unknown device nearby"
         message: >-
           {% set known = (states('input_text.known_wifi_macs') | default('', true)).split(',') | map('trim') | list %}
-          New device fingerprint {{ value_json.fingerprint }} (MAC {{ value_json.mac }}, RSSI {{ value_json.rssi }} dBm)
-          {% if value_json.fingerprint not in known and value_json.mac not in known %}is not on the known list.{% endif %}
+          New device fingerprint {{ trigger.payload_json.fingerprint }} (MAC {{ trigger.payload_json.mac }}, RSSI {{ trigger.payload_json.rssi }} dBm)
+          {% if trigger.payload_json.fingerprint not in known and trigger.payload_json.mac not in known %}is not on the known list.{% endif %}
     - service: persistent_notification.create
       data:
         title: "Unknown WiFi device"
         message: >-
-          New device fingerprint {{ value_json.fingerprint }} (MAC {{ value_json.mac }}, RSSI {{ value_json.rssi }} dBm)
+          New device fingerprint {{ trigger.payload_json.fingerprint }} (MAC {{ trigger.payload_json.mac }}, RSSI {{ trigger.payload_json.rssi }} dBm)
 
 - id: loiter_alert
   alias: "Security - Device Loitering"
@@ -152,19 +152,19 @@
     - condition: template
       value_template: >-
         {% set known = (states('input_text.known_wifi_macs') | default('', true)).split(',') | map('trim') | list %}
-        {{ value_json.fingerprint not in known and value_json.mac not in known }}
+        {{ trigger.payload_json.fingerprint not in known and trigger.payload_json.mac not in known }}
   action:
     - service: notify.everyone
       data:
         title: "Device loitering near home"
         message: >-
           {% set known = (states('input_text.known_wifi_macs') | default('', true)).split(',') | map('trim') | list %}
-          Device {{ value_json.fingerprint }} has been nearby {{ value_json.span }}s,
-          seen with {{ value_json.macs }} MAC addresses (sequence confirms same radio:
-          {{ value_json.seq_contiguous }}).
+          Device {{ trigger.payload_json.fingerprint }} has been nearby {{ trigger.payload_json.span }}s,
+          seen with {{ trigger.payload_json.macs }} MAC addresses (sequence confirms same radio:
+          {{ trigger.payload_json.seq_contiguous }}).
     - service: persistent_notification.create
       data:
         title: "Device loitering near home"
         message: >-
-          Device {{ value_json.fingerprint }} nearby {{ value_json.span }}s,
-          {{ value_json.macs }} MACs, same-radio confirmed: {{ value_json.seq_contiguous }}.
+          Device {{ trigger.payload_json.fingerprint }} nearby {{ trigger.payload_json.span }}s,
+          {{ trigger.payload_json.macs }} MACs, same-radio confirmed: {{ trigger.payload_json.seq_contiguous }}.
