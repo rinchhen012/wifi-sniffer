@@ -268,6 +268,29 @@ login on your Mac.
 | Fingerprint keeps changing for one device | OS update changed probe IEs; re-add the new fingerprint to the known list |
 | ESPHome compile slow | First build downloads the toolchain (~10 min, one-time) |
 
+## Reusing the boards for other projects
+
+Both ESP32s are ordinary dev boards - you can flash them with anything, but:
+
+- One board runs **one firmware at a time**. Reflashing replaces this
+  project's role on that board until you flash it back.
+- Restoring this project takes 2 minutes because both firmwares live in this
+  repo:
+  ```bash
+  # ESP32-D (ESPHome: BLE + PIR)
+  .venv/bin/esphome run esphome/presence-sensor.yaml
+
+  # ESP32-S3 (sniffer) - or just Upload in the Arduino IDE
+  arduino-cli upload -p /dev/cu.usbmodem1101 \
+    --fqbn esp32:esp32:esp32s3:CDCOnBoot=cdc wifi_sniffer/wifi_sniffer.ino
+  ```
+- **Growing** this project instead of replacing it is easy: the ESPHome YAML
+  can host extra sensors/relays/LEDs on spare GPIOs alongside the PIR + BLE
+  proxy. The sniffer sketch can also gain extra sensor code that publishes
+  over the same MQTT connection.
+- Want a board to tinker with while this system stays online? A spare ESP32
+  is ~$4 - recommended once you catch the bug.
+
 ## Security notes
 
 - MQTT is anonymous on the LAN - fine for home, but make sure port 1883 is
