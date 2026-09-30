@@ -174,6 +174,28 @@ docker compose exec mosquitto mosquitto_sub -t 'presence/#' -v
    Tip: `macs > 1` on one of *your* devices is normal - it just means the
    fingerprint logic correctly grouped that device's rotating MACs.
 
+## HTTPS + remote access (Tailscale)
+
+Companion apps require HTTPS for non-local connections. Tailscale Serve gives
+a real certificate AND access away from home:
+
+```bash
+tailscale up                                   # log in once
+tailscale serve --bg http://127.0.0.1:8123     # HTTPS -> local HA
+tailscale serve status                         # prints your URL
+```
+
+Connect the app to `https://<machine>.<tailnet>.ts.net` (phone must have
+Tailscale running - the URL is tailnet-only, not public internet).
+
+Gotcha discovered the hard way: `http:` options in `configuration.yaml`
+(`use_x_forwarded_for`, `trusted_proxies`) are migrated **once** into
+`home-assistant/.storage/http`. If you change the YAML block afterwards,
+delete `home-assistant/.storage/http` and restart HA so it re-migrates.
+`trusted_proxies` must include the Docker gateway IP as the HA container sees
+it (`192.168.97.1` on OrbStack) - otherwise HA rejects proxied requests with
+400 "not set-up for reverse proxies".
+
 ## Testing checklist
 
 - [ ] `binary_sensor.someone_home` turns on when a person is home
