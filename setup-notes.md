@@ -208,6 +208,40 @@ it (`192.168.97.1` on OrbStack) - otherwise HA rejects proxied requests with
 - [ ] Same phone loiters 30+ min -> "Device loitering" notification (once)
 - [ ] Two identical phone models may share a fingerprint (rare, safe merge)
 
+## Start / stop the system (day-2 usage)
+
+**The ESP32s**: no switch - unplug USB = off, plug back in = on. They
+reconnect to WiFi/MQTT/HA automatically within ~30 s. Nothing to do on the
+software side.
+
+**The hub (Home Assistant + Mosquitto in Docker)**:
+
+```bash
+cd wifi-sniffer
+docker compose stop        # turn off (containers + the app go offline)
+docker compose start       # turn back on exactly as they were
+```
+
+- Data survives everything: config, credentials and history live in the
+  mounted folders (`home-assistant/`, `mosquitto/`), not inside the containers
+- Quitting the **OrbStack** app also stops the hub. When you relaunch
+  OrbStack, containers with `restart: unless-stopped` come back by themselves
+  - *unless* you had explicitly run `docker compose stop` first
+- If things look dead: `docker compose ps` (both should be "Up"), then check
+  http://localhost:8123
+
+**After power-on checklist:**
+
+1. OrbStack running, `docker compose ps` shows homeassistant + mosquitto Up
+2. Open HA once (localhost:8123 or the Tailscale URL) to confirm
+3. Plug in the ESP32s - blue LEDs blink as they reconnect
+   (`ping presence-sensor.local` replies when the PIR/BLE board is back)
+
+**Note:** the Mac must stay awake for the system to run. Disable automatic
+sleep: System Settings > Lock Screen > "Prevent automatic sleeping on power
+adapter when the display is off", and set OrbStack + Tailscale to start at
+login on your Mac.
+
 ## Migrating to a Raspberry Pi later
 
 - Stop: `docker compose down`
