@@ -1,6 +1,9 @@
 # Home Assistant configuration
 # Set your location/timezone via Settings > System > General (UI writes here).
 
+# Required for the companion app (presence tracking + push notifications)
+mobile_app:
+
 automation: !include automations.yaml
 template: !include template.yaml
 input_boolean: !include input_boolean.yaml
