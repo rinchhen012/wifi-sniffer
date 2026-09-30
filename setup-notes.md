@@ -15,7 +15,7 @@ Presence detection + security notifications using Home Assistant, an ESP32
 ## File tree
 
 ```
-presence-automation/
+wifi-sniffer/
 ├── docker-compose.yml            # Home Assistant + Mosquitto MQTT broker
 ├── mosquitto/config/mosquitto.conf
 ├── esphome/
@@ -47,7 +47,7 @@ presence-automation/
 Prereq: OrbStack / Docker running on your Mac (images already pre-pulled).
 
 ```bash
-cd presence-automation
+cd wifi-sniffer
 docker compose up -d
 ```
 
@@ -67,13 +67,13 @@ docker compose up -d
 
 ## Step 3 - ESP32 #1: presence sensor (BLE + PIR)
 
-ESPHome 2026.7.4 is already installed in `.venv`; the API key is already
+ESPHome is already installed in `.venv`; the API key is already
 generated in `esphome/secrets.yaml` (gitignored - on a fresh clone, copy
 `esphome/secrets.example.yaml` to `secrets.yaml` first). Only the WiFi
 SSID/password are missing.
 
 1. Edit `esphome/secrets.yaml` and fill in your WiFi SSID/password.
-2. Flash (device in USB), from `presence-automation/`:
+2. Flash (device in USB), from `wifi-sniffer/`:
    ```bash
    .venv/bin/esphome run esphome/presence-sensor.yaml
    ```
@@ -181,7 +181,7 @@ docker compose exec mosquitto mosquitto_sub -t 'presence/#' -v
 ## Migrating to a Raspberry Pi later
 
 - Stop: `docker compose down`
-- Copy the whole `presence-automation/` folder to the Pi
+- Copy the whole `wifi-sniffer/` folder to the Pi
 - `docker compose up -d` - identical stack. Change `MQTT_HOST` in the .ino to
   the Pi's IP (or a hostname) and re-flash the sniffer.
 
