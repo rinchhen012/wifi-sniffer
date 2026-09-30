@@ -188,6 +188,13 @@ tailscale serve status                         # prints your URL
 Connect the app to `https://<machine>.<tailnet>.ts.net` (phone must have
 Tailscale running - the URL is tailnet-only, not public internet).
 
+Strictly speaking Tailscale isn't required for the *sensors* - the ESP32s talk
+to the hub over plain local WiFi. It's required for the *companion apps*,
+which refuse plain HTTP. Alternatives to Tailscale for that job: a Nabu Casa
+subscription (official remote access, ~$6.50/mo) or your own domain + reverse
+proxy with Let's Encrypt certificates. Tailscale is free, already in use, and
+doubles as remote access, hence the choice.
+
 Gotcha discovered the hard way: `http:` options in `configuration.yaml`
 (`use_x_forwarded_for`, `trusted_proxies`) are migrated **once** into
 `home-assistant/.storage/http`. If you change the YAML block afterwards,
