@@ -6,6 +6,7 @@ __pycache__/
 
 # Secrets - copy esphome/secrets.example.yaml to secrets.yaml and fill in
 esphome/secrets.yaml
+wifi_sniffer/config.h
 
 # Mosquitto runtime data
 mosquitto/data/
@@ -14,6 +15,7 @@ mosquitto/log/
 # Home Assistant runtime artifacts (created once HA runs)
 home-assistant/.storage/
 home-assistant/.cloud/
+home-assistant/.cache/
 home-assistant/.ha_run.lock
 home-assistant/blueprints/
 home-assistant/deps/

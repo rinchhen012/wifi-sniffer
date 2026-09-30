@@ -23,10 +23,9 @@
 #include "esp_wifi.h"
 
 // ---------------------- CONFIG ----------------------
-#define WIFI_SSID        "YOUR_WIFI_SSID"
-#define WIFI_PASSWORD    "YOUR_WIFI_PASSWORD"
-#define MQTT_HOST        "192.168.11.19"   // IP of the machine running Home Assistant
-#define MQTT_PORT        1883
+// WiFi + MQTT settings live in config.h (gitignored).
+// Copy config.example.h to config.h and fill in your own values.
+#include "config.h"
 
 #define MQTT_TOPIC_PROBES   "presence/wifi_probes"
 #define MQTT_TOPIC_DEVICES  "presence/wifi_devices"

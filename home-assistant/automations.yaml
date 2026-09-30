@@ -101,7 +101,7 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: binary_sensor.pir_motion
+      entity_id: binary_sensor.presence_sensor_pir_motion
       to: "on"
   condition:
     - condition: state

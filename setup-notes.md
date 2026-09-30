@@ -10,7 +10,7 @@ Presence detection + security notifications using Home Assistant, an ESP32
 - [x] esphome 2026.7.4 in `.venv`; API key generated; ESPHome config validates
 - [x] Docker images pre-pulled (Home Assistant + Mosquitto)
 - [ ] Fill `esphome/secrets.yaml` WiFi SSID/password (flash-time only)
-- [ ] Edit `MQTT_HOST` in `wifi_sniffer.ino` (Mac's LAN IP, flash-time only)
+- [ ] Fill `wifi_sniffer/config.h` (copy from `config.example.h`; flash-time only)
 
 ## File tree
 
@@ -86,10 +86,16 @@ SSID/password are missing.
 ```
 HC-SR501        ESP32
 ---------       -----
-VCC      ────  3V3
+VCC      ────  5V      (needs >= 4.5V, so NOT 3V3; OUT still swings 3.3V)
 GND      ────  GND
 OUT      ────  GPIO4
 ```
+
+No labels on the PIR? The 3-pin order is: outer = VCC, **middle = OUT** (always
+OUT on every HC-SR501 clone), other outer = GND. The standard board has a
+reverse-polarity protection diode, so if the two outer pins are swapped the
+sensor simply won't work (no damage) - swap and retry. Labels, when present,
+are often printed on the front PCB hidden under the white dome.
 
 Trim the two potentiometers: left = sensitivity (start mid), right = delay
 (rotate fully counter-clockwise for shortest pulse).
@@ -108,8 +114,9 @@ Trim the two potentiometers: left = sensitivity (start mid), right = delay
 
 1. Arduino IDE > Boards Manager > install "esp32 by Espressif".
 2. Library Manager > install "PubSubClient by Nick O'Leary".
-3. Open `wifi_sniffer/wifi_sniffer.ino`, edit the config block at the top
-   (WiFi creds + `MQTT_HOST` = IP of this Mac).
+3. Copy `wifi_sniffer/config.example.h` to `wifi_sniffer/config.h` and fill in
+   your WiFi SSID/password + `MQTT_HOST` (= this Mac's LAN IP). `config.h` is
+   gitignored, so real credentials never land in the repo.
 4. Select your ESP32 board, upload, open Serial Monitor (115200) to verify
    "Sniffing started" and MQTT connected.
 

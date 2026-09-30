@@ -68,8 +68,8 @@ MQTT topics published by the sniffer:
    `.venv/bin/esphome run esphome/presence-sensor.yaml`
 3. **Pair phones** — install the HA companion app, create Person entities,
    set your notify services in `home-assistant/notify.yaml`
-4. **Flash ESP32 #2** — set WiFi + `MQTT_HOST` in `wifi_sniffer.ino`, upload
-   with the Arduino IDE
+4. **Flash ESP32 #2** — copy `wifi_sniffer/config.example.h` to `config.h`,
+   fill in WiFi + `MQTT_HOST`, upload with the Arduino IDE
 5. **Teach it your devices** — add MACs/fingerprints to the *Known WiFi
    MACs / Fingerprints* helper
 
