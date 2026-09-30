@@ -37,6 +37,15 @@ MQTT topics published by the sniffer:
 | `presence/wifi_new` | new fingerprint event | on first sight |
 | `presence/wifi_loiter` | loitering fingerprint event | once per loiter transition |
 
+## Access
+
+- **Local browser** — http://localhost:8123 (on the host machine)
+- **Companion apps** — require HTTPS. Tailscale Serve provides a real
+  certificate: `tailscale serve --bg http://127.0.0.1:8123`, then point the app
+  at `https://<machine>.<tailnet>.ts.net` (tailnet-only, works from anywhere).
+  HA needs `use_x_forwarded_for` + `trusted_proxies` for the reverse proxy -
+  see setup-notes for the gotcha with `.storage/http`.
+
 ## Hardware
 
 | Item | Price | Notes |
@@ -56,7 +65,8 @@ MQTT topics published by the sniffer:
 │   ├── presence-sensor.yaml      # ESP32 #1: BLE proxy + PIR
 │   └── secrets.example.yaml      # copy to secrets.yaml, fill in
 ├── wifi_sniffer/
-│   └── wifi_sniffer.ino          # ESP32 #2: WiFi probe sniffer (Arduino)
+│   ├── wifi_sniffer.ino          # ESP32 #2: WiFi probe sniffer (Arduino)
+│   └── config.example.h          # copy to config.h, fill WiFi + MQTT host
 ├── home-assistant/               # HA config: automations, sensors, helpers
 └── setup-notes.md                # full walkthrough
 ```
@@ -66,8 +76,9 @@ MQTT topics published by the sniffer:
 1. **Start the hub** — `docker compose up -d`, then open http://localhost:8123
 2. **Flash ESP32 #1** — fill `esphome/secrets.yaml`, then
    `.venv/bin/esphome run esphome/presence-sensor.yaml`
-3. **Pair phones** — install the HA companion app, create Person entities,
-   set your notify services in `home-assistant/notify.yaml`
+3. **Pair phones** — install the HA companion app, connect it via the HTTPS
+   URL (see Access), link the phone tracker to a Person, and set your notify
+   services in `home-assistant/notify.yaml`
 4. **Flash ESP32 #2** — copy `wifi_sniffer/config.example.h` to `config.h`,
    fill in WiFi + `MQTT_HOST`, upload with the Arduino IDE
 5. **Teach it your devices** — add MACs/fingerprints to the *Known WiFi
