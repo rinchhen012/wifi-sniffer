@@ -1,5 +1,6 @@
 - name: everyone
   platform: group
   services:
-    - service: mobile_app_your_iphone
-    - service: mobile_app_your_android
+    - service: mobile_app_home   # Android (vivo V2405A, device name "Home")
+    # Add the iPhone here when paired, e.g.:
+    # - service: mobile_app_iphone
