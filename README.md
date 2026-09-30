@@ -1,4 +1,4 @@
-# presence-automation
+# wifi-sniffer
 
 Presence detection and home-security notifications built on **Home Assistant**,
 two **ESP32** boards, a **PIR sensor**, and **MQTT**.
