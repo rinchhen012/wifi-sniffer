@@ -14,6 +14,8 @@ mosquitto/log/
 # Home Assistant runtime artifacts (created once HA runs)
 home-assistant/.storage/
 home-assistant/.cloud/
+home-assistant/.ha_run.lock
+home-assistant/blueprints/
 home-assistant/deps/
 home-assistant/tts/
 home-assistant/*.log
